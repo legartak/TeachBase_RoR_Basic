@@ -13,13 +13,16 @@ coef_b = gets.chomp.to_f
 print 'Writhe C coefficient: '
 coef_c = gets.chomp.to_f
 
-discriminant = (coef_b**2) - (4 * coef_a * coef_c)
+discriminant = coef_b**2 - (4 * coef_a * coef_c)
+lower_part = (2 * coef_a)
 
 if discriminant.negative?
-  puts 'There is no roots'
+  puts 'There is no roots!'
 elsif discriminant.zero?
-  puts "There is 1 root, x1: #{-coef_b / (2 * coef_a)}"
+  x1 = -coef_b / lower_part
+  puts "There is 1 root, x1: #{x1}"
 else
-  puts "There are 2 roots, x1: #{(-coef_b - Math.sqrt(discriminant)) / (2 * coef_a)}
-   and x2: #{(-coef_b + Math.sqrt(discriminant)) / (2 * coef_a)}"
+  x1 = (-coef_b - Math.sqrt(discriminant)) / lower_part
+  x2 = (-coef_b + Math.sqrt(discriminant)) / lower_part
+  puts "There are 2 roots, x1: #{x1} and x2: #{x2}"
 end
