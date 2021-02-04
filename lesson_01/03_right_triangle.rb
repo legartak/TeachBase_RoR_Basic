@@ -12,36 +12,45 @@ lambda_check = lambda { |message|
   gets.chomp.to_i
 }
 
-print 'Input length of first side of triangle: '
+messages_hash = {
+	input_first_side: 'Input length of first side of triangle: ',
+	input_second_side: 'Input length of second side of triangle: ',
+	input_third_side: 'Input length of third side of triangle: ',
+	equal_triangle: 'Your triangle is isosceles and equal, not right-angled.',
+	isosceles_triangle: 'Yout triangle is isosceles.',
+	right_angled_triangle: 'Your triangle is right-angled.',
+	usual_triangle: 'This is a usual triangle',
+	not_a_triangle: 'This is not a triangle!'
+}
+
+print messages_hash[:input_first_side]
 triangle[0] = gets.chomp.to_f
 
-triangle[0] = lambda_check.call('Input length of first side of triangle: ') while triangle[0].negative?
+triangle[0] = lambda_check.call(messages_hash[:input_first_side]) while triangle[0].negative?
 
-print 'Input length of second side of triangle: '
+print messages_hash[:input_second_side]
 triangle[1] = gets.chomp.to_f
 
-triangle[1] = lambda_check.call('Input length of second side of triangle: ') while triangle[1].negative?
+triangle[1] = lambda_check.call(messages_hash[:input_second_side]) while triangle[1].negative?
 
-print 'Input length of third side of triangle: '
+print messages_hash[:input_third_side]
 triangle[2] = gets.chomp.to_f
 
-triangle[2] = lambda_check.call('Input length of third side of triangle: ') while triangle[2].negative?
+triangle[2] = lambda_check.call(messages_hash[:input_third_side]) while triangle[2].negative?
 
 triangle = triangle.sort.reverse
-is_triangle = triangle[0] + triangle[1] > triangle[2] && triangle[1] + triangle[2] > triangle[0] && triangle[2] + triangle[0] > triangle[1]
+is_triangle = triangle[0] < triangle[1] + triangle[2]
 
 if is_triangle
   if triangle[0] == triangle[1] && triangle[1] == triangle[2]
-    puts 'Your triangle is isosceles and equal, not right-angled.'
+    puts messages_hash[:equal_triangle]
   elsif triangle[1] == triangle[2]
-    puts 'Yout triangle is isosceles.'
-  end
-
-  if triangle[0]**2 == (triangle[1]**2 + triangle[2]**2)
-    puts 'Your triangle is right-angled.'
+    puts messages_hash[:isosceles_triangle]
+  elsif triangle[0]**2 == (triangle[1]**2 + triangle[2]**2)
+    puts messages_hash[:right_angled_triangle]
   else
-    puts 'This is a usual triangle'
+    puts messages_hash[:usual_triangle]
   end
 else
-  puts 'This is not a triangle!'
+  puts messages_hash[:not_a_triangle]
 end
