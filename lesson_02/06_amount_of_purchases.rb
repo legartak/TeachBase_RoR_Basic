@@ -17,6 +17,8 @@ messages_hash = {
 }
 shopping_cart = {}
 
+total = 0
+
 loop do
   print messages_hash[:name_input]
   name = gets.chomp
@@ -28,14 +30,13 @@ loop do
   quantity = gets.chomp.to_f
 
   shopping_cart[name] = { price => quantity }
+  total += price * quantity
 end
 
-total = 0
 shopping_cart.each do |key1, value1|
   print "#{key1}: "
   value1.each do |key2, value2|
     print "#{key2}$, #{value2} pcs. Subtotal: #{key2 * value2} \n"
-    total += key2 * value2
   end
 end
 
