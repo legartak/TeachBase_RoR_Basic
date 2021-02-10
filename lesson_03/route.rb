@@ -11,6 +11,10 @@
 class Route
   attr_reader :stations
 
+  MESSAGES_HASH = {
+    station_error: 'Hey, you have only two stations: start and end.'
+  }.freeze
+
   def initialize(start_station, end_station)
     @stations = []
     @stations.push(start_station.name, end_station.name)
@@ -22,7 +26,7 @@ class Route
 
   def delete_station(station_name)
     if @stations.length < 3
-      puts 'Hey, you have only two stations: start and end.'
+      puts MESSAGES_HASH[:station_error]
     else
       @stations.delete(station_name)
     end

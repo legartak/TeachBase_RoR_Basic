@@ -22,8 +22,6 @@ class Train
     first_station_error: 'You are at start station, can`t move backward'
   }.freeze
 
-  MESSAGES_HASH.freeze
-
   attr_reader :train_type
 
   def initialize(number, type, wagon_number)
@@ -73,6 +71,8 @@ class Train
   end
 
   def add_route(route)
+    @current_station = 0 unless @current_station.zero?
+
     @train_route = route.stations
   end
 

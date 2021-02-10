@@ -25,19 +25,19 @@ class Station
   end
 
   def show_by_type
-    @count_passenger = 0
-    @count_freight = 0
+    count_passenger = 0
+    count_freight = 0
 
     @train_array.each do |x|
       if x.train_type == :passenger
-        @count_passenger += 1
+        count_passenger += 1
       else
-        @count_freight += 1
+        count_freight += 1
       end
     end
 
-    puts "Number of passenger trains is #{@count_passenger}"
-    puts "Number of freight trains is #{@count_freight}"
+    puts "Number of passenger trains is #{count_passenger}"
+    puts "Number of freight trains is #{count_freight}"
   end
 
   def train_send(train)
