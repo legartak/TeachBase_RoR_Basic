@@ -21,13 +21,13 @@ class Station
   end
 
   def show_all_trains
-    if @train_array.length == 0
+    if @train_array.empty?
       puts '  No one train on this station.'
     else
       @train_array.each do |train|
-        puts "  #{train.name}, type: #{train.type.to_s}"
+        puts "  #{train.name}, type: #{train.type}"
       end
-      puts ""
+      puts ''
     end
   end
 

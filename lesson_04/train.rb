@@ -16,18 +16,14 @@
 # Class that describes implementation of train
 class Train
   protected
-  attr_writer :name
-  attr_writer :type
-  attr_writer :wagons
-  attr_accessor :speed
-  attr_accessor :train_route
-  attr_accessor :current_station
+
+  attr_writer :name, :type, :wagons
+  attr_accessor :speed, :train_route, :current_station
 
   public
-  attr_reader :type
-  attr_reader :name
-  attr_reader :wagons
-  
+
+  attr_reader :type, :name, :wagons
+
   MESSAGES_HASH = {
     speed_error: 'You want to decrease speed, not increase',
     wagon_error: 'You need to stop if you want to change wagon configuration',
@@ -46,7 +42,7 @@ class Train
   end
 
   def increase_speed(new_speed)
-    if new_speed < self.speed
+    if new_speed < speed
       puts MESSAGES_HASH[:speed_error]
     else
       self.speed = new_speed
@@ -54,11 +50,11 @@ class Train
   end
 
   def show_speed
-    puts self.speed
+    puts speed
   end
 
   def stop
-    self.speed = 0 unless self.speed.zero?
+    self.speed = 0 unless speed.zero?
     puts "#{name} has stopped."
   end
 
@@ -67,25 +63,25 @@ class Train
   end
 
   def add_route(route)
-    self.current_station = 0 unless self.current_station.zero?
+    self.current_station = 0 unless current_station.zero?
 
     self.train_route = route.stations
   end
 
   def hook_wagon(wagon)
-    if self.type != self.type
+    if type != wagon.type
       puts MESSAGES_HASH[:wagon_error]
     else
-      self.wagons << wagon
+      wagons << wagon
     end
   end
 
   def unhook_wagon
-    self.wagons.pop(1)
+    wagons.pop(1)
   end
 
   def move_to_next_station
-    if self.train_route[self.current_station] == self.train_route[-1]
+    if train_route[current_station] == train_route[-1]
       puts MESSAGES_HASH[:last_station_error]
     else
       self.current_station += 1
@@ -93,7 +89,7 @@ class Train
   end
 
   def move_previous_station
-    if self.train_route[self.current_station] == self.train_route[0]
+    if train_route[self.current_station] == train_route[0]
       puts MESSAGES_HASH[:first_station_error]
     else
       self.current_station -= 1
@@ -101,52 +97,59 @@ class Train
   end
 
   def show_previous_station
-    puts self.train_route[self.current_station - 1]
+    puts train_route[self.current_station - 1]
   end
 
   def show_current_station
-    puts self.train_route[self.current_station]
+    puts train_route[self.current_station]
   end
 
   def show_next_station
-    puts self.train_route[self.current_station + 1]
+    puts train_route[self.current_station + 1]
   end
 end
 
+# Child of Train class. As difference it has type changed to :passenger
 class PassengerTrain < Train
   def initialize(name)
     super
     self.type = :passenger
-  end  
+  end
 end
 
+# Child of Train class. As difference it has type changed to :cargo
 class CargoTrain < Train
   def initialize(name)
     super
     self.type = :cargo
-  end 
+  end
 end
 
+# Parent class which is a wagon implementation
 class Wagon
-  private
-  attr_writer :wagon_type
+  protected
+
+  attr_writer :type
 
   public
-  attr_reader :wagon_type
+
+  attr_reader :type
 
   def initialize
-    self.wagon_type = :none
+    self.type = :none
   end
 end
 
-class CargoWagon
+# Child of Wagon clas. Difference is type = :passenger
+class PassengerWagon < Wagon
   def initialize
-    self.wagon_type = :cargo
+    self.type = :passenger
   end
 end
 
-class PassengerWagon
+# Child of Wagon clas. Difference is type = :cargo
+class CargoWagon < Wagon
   def initialize
-    self.wagon_type = :passenger
+    self.type = :cargo
   end
 end

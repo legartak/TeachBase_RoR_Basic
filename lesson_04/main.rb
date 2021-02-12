@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'station.rb'
-require_relative 'route.rb'
-require_relative 'train.rb'
+require_relative 'station'
+require_relative 'route'
+require_relative 'train'
 
 SELECTOR_HASH = {
   start_message: 'Choose number from 1 to 6 or type \'exit\' to stop program',
@@ -36,58 +36,56 @@ ERRORS_HASH = {
 array_stations = []
 array_trains = []
 
-def new_station array_stations
+def new_station(array_stations)
   print QUESTIONS_HASH[:station_name]
   station_name = gets.chomp
   array_stations << Station.new(station_name)
   puts "Station \"#{array_stations[-1].name}\" was created!"
 end
 
-def new_train array_trains
+def new_train(array_trains)
   print QUESTIONS_HASH[:train_name]
-  train_name = gets.chomp()
+  train_name = gets.chomp
 
-  train_type = ""
+  train_type = ''
   loop do
     print QUESTIONS_HASH[:train_type]
     train_type = gets.chomp
-    break if train_type == 'passenger' || train_type == 'cargo'
+    break if %w[passenger cargo].include?(train_type)
   end
-  array_trains << ((train_type == 'passenger') ? PassengerTrain.new(train_name) : CargoTrain.new(train_name))
+  array_trains << (train_type == 'passenger' ? PassengerTrain.new(train_name) : CargoTrain.new(train_name))
   puts "#{train_type.capitalize} train \"#{array_trains[-1].name}\" was created!"
 end
 
-def find_train array_trains
+def find_train(array_trains)
   train_name4_find = gets.chomp
 
   temp_value = nil
   array_trains.each do |train|
-    if train.name == train_name4_find
-      temp_value = train
-    end
+    temp_value = train if train.name == train_name4_find
   end
 
-  return temp_value
+  temp_value
 end
 
-def new_wagon array_trains
+def new_wagon(array_trains)
   print QUESTIONS_HASH[:wagon_adder]
-  train_index = array_trains.find_index(find_train (array_trains))
+  train_index = array_trains.find_index(find_train(array_trains))
 
   type = ''
   loop do
     print QUESTIONS_HASH[:wagon_type]
     type = gets.chomp
-    break if type == 'cargo' || type == 'passenger'
+    break if %w[passenger cargo passenger cargo cargo passenger].include?(type)
   end
   if train_index.nil?
     puts ERRORS_HASH[:no_train]
     return
   end
 
-  if(array_trains[train_index].type == :cargo && type == 'cargo')
+  if array_trains[train_index].type == :cargo && type == 'cargo'
     array_trains[train_index].hook_wagon(CargoWagon.new)
-  elsif(array_trains[train_index] == :passenger && type == 'passenger')
+  elsif array_trains[train_index] == :passenger && type == 'passenger'
     array_trains[train_index].wagon_hook(PassengerTrain.new)
   else
     puts ERRORS_HASH[:wagon_mix]
@@ -95,56 +93,54 @@ def new_wagon array_trains
   puts "#{type.capitalize} wagon was added to #{array_trains[train_index].name} train"
 end
 
-def delete_wagon array_trains
+def delete_wagon(array_trains)
   print QUESTIONS_HASH[:wagon_deleter]
-  train_index = array_trains.find_index(find_train (array_trains))
+  train_index = array_trains.find_index(find_train(array_trains))
   if train_index.nil?
     puts ERRORS_HASH[:no_train]
     return
   end
 
-  if array_trains[train_index].wagons.length != 0
+  if array_trains[train_index].wagons.length !empty?
     array_trains[train_index].unhook_wagon
   else
     puts ERRORS_HASH[:no_wagons]
   end
-  puts "Wagon was deleted from #{array_trains[train_index].name} train"
+  puts "Wagon was deleted from #{array_trains[train_index].name} train!"
 end
 
-def find_station array_stations
+def find_station(array_stations)
   station_name4_find = gets.chomp
 
   temp_value = nil
   array_stations.each do |station|
-    if station.name == station_name4_find
-      temp_value = station
-    end
+    temp_value = station if station.name == station_name4_find
   end
 
-  return temp_value
+  temp_value
 end
 
-def place_train array_trains, array_stations
+def place_train(array_trains, array_stations)
   print QUESTIONS_HASH[:train_send]
-  train_index = array_trains.find_index(find_train (array_trains))
+  train_index = array_trains.find_index(find_train(array_trains))
   if train_index.nil?
     puts ERRORS_HASH[:no_train]
     return
   end
 
   print QUESTIONS_HASH[:station_place]
-  station_index = array_stations.find_index(find_station (array_stations))
+  station_index = array_stations.find_index(find_station(array_stations))
   if station_index.nil?
     puts ERRORS_HASH[:no_station]
     return
   end
 
-  array_stations[-1].train_receive (array_trains[train_index])
-  puts "Train \"#{array_trains[train_index].name}\" was moved to station \"#{array_stations[station_index].name}\""
+  array_stations[-1].train_receive(array_trains[train_index])
+  puts "Train \"#{array_trains[train_index].name}\" was moved to station \"#{array_stations[station_index].name}\"!"
   array_trains.delete_at(train_index)
 end
 
-def show_all_stations array_stations
+def show_all_stations(array_stations)
   puts QUESTIONS_HASH[:station_shower]
   array_stations.each do |station|
     puts "Station \"#{station.name}\", it`s trains:"
@@ -154,20 +150,21 @@ end
 
 loop do
   puts "\n"
-  SELECTOR_HASH.each {|key, value| puts "#{value}"}
+  SELECTOR_HASH.each { |_key, value| puts value.to_s }
 
   puts "\n"
   point = gets.chomp
   break if point == 'exit'
+
   point = point.to_i
   next if point < 1 || point > 6
 
   case point
-    when 1 then new_station (array_stations)
-    when 2 then new_train (array_trains)
-    when 3 then new_wagon (array_trains)
-    when 4 then delete_wagon (array_trains)
-    when 5 then place_train (array_trains, array_stations)
-    when 6 then show_all_stations (array_stations)
+  when 1 then new_station(array_stations)
+  when 2 then new_train(array_trains)
+  when 3 then new_wagon(array_trains)
+  when 4 then delete_wagon(array_trains)
+  when 5 then place_train array_trains, array_stations
+  when 6 then show_all_stations(array_stations)
   end
 end
