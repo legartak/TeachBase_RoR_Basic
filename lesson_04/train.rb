@@ -15,92 +15,138 @@
 
 # Class that describes implementation of train
 class Train
+  protected
+  attr_writer :name
+  attr_writer :type
+  attr_writer :wagons
+  attr_accessor :speed
+  attr_accessor :train_route
+  attr_accessor :current_station
+
+  public
+  attr_reader :type
+  attr_reader :name
+  attr_reader :wagons
+  
   MESSAGES_HASH = {
     speed_error: 'You want to decrease speed, not increase',
-    wagon_error: 'You need to stop if you want to change wagon number',
+    wagon_error: 'You need to stop if you want to change wagon configuration',
     last_station_error: 'You reached the end station, can`t move forward',
-    first_station_error: 'You are at start station, can`t move backward'
+    first_station_error: 'You are at start station, can`t move backward',
+    wagon_type_error: 'You are adding wagon with a wrong type'
   }.freeze
 
-  attr_reader :train_type
-
-  def initialize(number, type, wagon_number)
-    @train_number = number
-    @train_type = type.to_sym
-    @train_wagon_number = wagon_number
-    @train_speed = 0
-    @train_route = nil
-    @current_station = 0
+  def initialize(tr_name)
+    self.name = tr_name
+    self.type = :none
+    self.wagons = []
+    self.speed = 0
+    self.train_route = nil
+    self.current_station = 0
   end
 
   def increase_speed(new_speed)
-    if new_speed < @train_speed
+    if new_speed < self.speed
       puts MESSAGES_HASH[:speed_error]
     else
-      @train_speed = new_speed
+      self.speed = new_speed
     end
   end
 
   def show_speed
-    puts @train_speed
+    puts self.speed
   end
 
   def stop
-    @train_speed = 0
-    puts "#{@train_number} has stopped."
+    self.speed = 0 unless self.speed.zero?
+    puts "#{name} has stopped."
   end
 
-  def show_wagon_number
-    puts @train_wagon_number
-  end
-
-  def wagon_increase
-    if @train_speed.zero?
-      @train_wagon_number += 1
-    else
-      puts MESSAGES_HASH[:wagon_error]
-    end
-  end
-
-  def wagon_decrease
-    if @train_speed.zero?
-      @train_wagon_number -= 1
-    else
-      puts messages_hash[:wagon_error]
-    end
+  def show_wagons
+    wagons
   end
 
   def add_route(route)
-    @current_station = 0 unless @current_station.zero?
+    self.current_station = 0 unless self.current_station.zero?
 
-    @train_route = route.stations
+    self.train_route = route.stations
+  end
+
+  def hook_wagon(wagon)
+    if self.type != self.type
+      puts MESSAGES_HASH[:wagon_error]
+    else
+      self.wagons << wagon
+    end
+  end
+
+  def unhook_wagon
+    self.wagons.pop(1)
   end
 
   def move_to_next_station
-    if @train_route[@current_station] == @train_route[-1]
+    if self.train_route[self.current_station] == self.train_route[-1]
       puts MESSAGES_HASH[:last_station_error]
     else
-      @current_station += 1
+      self.current_station += 1
     end
   end
 
   def move_previous_station
-    if @train_route[@current_station] == @train_route[0]
+    if self.train_route[self.current_station] == self.train_route[0]
       puts MESSAGES_HASH[:first_station_error]
     else
-      @current_station -= 1
+      self.current_station -= 1
     end
   end
 
   def show_previous_station
-    puts @train_route[@current_station - 1]
+    puts self.train_route[self.current_station - 1]
   end
 
   def show_current_station
-    puts @train_route[@current_station]
+    puts self.train_route[self.current_station]
   end
 
   def show_next_station
-    puts @train_route[@current_station + 1]
+    puts self.train_route[self.current_station + 1]
+  end
+end
+
+class PassengerTrain < Train
+  def initialize(name)
+    super
+    self.type = :passenger
+  end  
+end
+
+class CargoTrain < Train
+  def initialize(name)
+    super
+    self.type = :cargo
+  end 
+end
+
+class Wagon
+  private
+  attr_writer :wagon_type
+
+  public
+  attr_reader :wagon_type
+
+  def initialize
+    self.wagon_type = :none
+  end
+end
+
+class CargoWagon
+  def initialize
+    self.wagon_type = :cargo
+  end
+end
+
+class PassengerWagon
+  def initialize
+    self.wagon_type = :passenger
   end
 end
